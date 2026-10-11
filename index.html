@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twin Star Computers | PC &amp; Laptop Repairs, Upgrades &amp; IT Sales</title>
+  <meta name="description" content="Twin Star Computers: laptop hinge repairs, screen replacements, SSD upgrades, hardware diagnostics, on-site IT support and IT sales.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- Tokens ---------- */
+    :root {
+      --bg: #050813;
+      --bg-header: #050813;
+      --panel: #0c1222;
+      --panel-2: #0f1628;
+      --tile: #0d1427;
+      --cyan: #7fdcff;
+      --cyan-strong: #82e0ff;
+      --cyan-dim: rgba(127, 220, 255, .35);
+      --cyan-line: rgba(127, 220, 255, .18);
+      --text: #ffffff;
+      --muted: #8f9bb3;
+      --muted-2: #6b7790;
+      --green: #4ade80;
+      --font-display: "Orbitron", "Segoe UI", system-ui, sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      --radius: 6px;
+      --container: 1280px;
+    }
+
+    /* ---------- Reset ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; margin: 0; padding: 0; }
+    h1, h2, h3, p { margin: 0; }
+    button, input, textarea { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin-inline: auto;
+      padding-inline: 2rem;
+    }
+
+    /* Subtle blueprint grid used behind every section below the header */
+    .grid-bg {
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(rgba(127, 220, 255, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 220, 255, .045) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ---------- Shared bits ---------- */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .9rem;
+      font-family: var(--font-display);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 38px;
+      height: 2px;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan-dim);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      border: 2px solid var(--cyan-strong);
+      cursor: pointer;
+      transition: background .2s, color .2s, box-shadow .2s, transform .2s;
+    }
+    .btn-solid {
+      background: var(--cyan-strong);
+      color: #04101c;
+      box-shadow: 0 0 22px rgba(130, 224, 255, .35);
+    }
+    .btn-solid:hover { background: #a6ebff; box-shadow: 0 0 30px rgba(130, 224, 255, .55); }
+    .btn-outline {
+      background: transparent;
+      color: var(--cyan-strong);
+      box-shadow: 0 0 16px rgba(130, 224, 255, .12);
+    }
+    .btn-outline:hover { background: rgba(130, 224, 255, .12); box-shadow: 0 0 24px rgba(130, 224, 255, .3); }
+
+    .icon {
+      width: 1em; height: 1em;
+      fill: none; stroke: currentColor;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ---------- Header ---------- */
+    .site-header {
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--cyan-line);
+      position: relative;
+      z-index: 10;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 256px;
+    }
+    .logo svg { width: 260px; height: 130px; }
+    .nav { display: flex; align-items: center; gap: 2rem; }
+    .nav a:not(.btn) {
+      font-family: var(--font-display);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav a:not(.btn):hover { color: var(--cyan); }
+    .nav .btn { padding: .95rem 2.1rem; font-size: .8rem; margin-left: .6rem; }
+
+    .nav-toggle {
+      display: none;
+      width: 44px; height: 44px;
+      background: transparent;
+      border: 1px solid var(--cyan-dim);
+      border-radius: 4px;
+      color: var(--cyan);
+      cursor: pointer;
+      align-items: center; justify-content: center;
+    }
+    .nav-toggle .icon { width: 22px; height: 22px; }
+
+    /* ---------- Hero ---------- */
+    .hero { padding: 1.5rem 0 5rem; text-align: center; position: relative; }
+    .hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 55% at 50% 30%, rgba(60, 140, 200, .12), transparent 70%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2.1rem, 6.2vw, 4.6rem);
+      line-height: 1.32;
+      letter-spacing: .005em;
+    }
+    .hero h1 span {
+      display: block;
+      color: var(--cyan-strong);
+      text-shadow: 0 0 28px rgba(130, 224, 255, .45);
+    }
+    .hero-lead {
+      max-width: 680px;
+      margin: 2rem auto 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 2;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2.6rem;
+    }
+    .hero-actions .btn { padding: 1.05rem 2.2rem; font-size: 1.05rem; }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(4, 212px);
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 3.4rem;
+    }
+    .quick-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .7rem;
+      min-height: 118px;
+      padding: 1rem;
+      background: linear-gradient(180deg, rgba(18, 26, 48, .9), rgba(11, 17, 34, .9));
+      border: 1px solid var(--cyan-line);
+      border-radius: var(--radius);
+      box-shadow: 0 0 30px rgba(127, 220, 255, .06);
+      font-family: var(--font-display);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9fb0cc;
+      text-align: center;
+    }
+    .quick-link .icon { width: 26px; height: 26px; color: var(--cyan-strong); }
+
+    /* ---------- Services ---------- */
+    .section { padding: 5.5rem 0; }
+    .section-head { text-align: center; }
+    .section-head h2 {
+      margin-top: .7rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+      line-height: 1.2;
+    }
+    .section-head p {
+      max-width: 680px;
+      margin: 1rem auto 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.6rem;
+      margin-top: 4rem;
+      max-width: 1280px;
+      margin-inline: auto;
+    }
+    .service-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1.6rem 1.9rem;
+      background: linear-gradient(180deg, #111829, #0d1424);
+      border: 1px solid var(--cyan-line);
+      border-radius: var(--radius);
+      box-shadow: 0 0 40px rgba(127, 220, 255, .07);
+    }
+    .service-icon {
+      width: 64px; height: 64px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      border: 1px solid var(--cyan-dim);
+      background: rgba(130, 224, 255, .07);
+      color: var(--cyan-strong);
+      box-shadow: 0 0 18px rgba(130, 224, 255, .15);
+    }
+    .service-icon .icon { width: 28px; height: 28px; }
+    .service-card h3 {
+      margin-top: 1.5rem;
+      font-family: var(--font-display);
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+    .service-card p {
+      margin-top: .9rem;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.55;
+      flex: 1;
+    }
+    .price {
+      margin-top: 1.7rem;
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--cyan-strong);
+      text-shadow: 0 0 14px rgba(130, 224, 255, .3);
+      font-feature-settings: "zero" 1;
+    }
+
+    /* ---------- Call-out ---------- */
+    .callout-wrap { padding: 1.5rem 0 5rem; }
+    .callout {
+      max-width: 1280px;
+      margin-inline: auto;
+      padding: 3rem 2.5rem 2.6rem;
+      background: linear-gradient(180deg, #101728, #0b1121);
+      border: 1px solid var(--cyan-dim);
+      border-radius: 10px;
+      box-shadow: 0 0 60px rgba(127, 220, 255, .12);
+    }
+    .callout-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+    .callout-head h2 {
+      margin-top: .8rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      line-height: 1.2;
+    }
+    .callout-head p {
+      max-width: 430px;
+      margin-top: .6rem;
+      font-family: var(--font-mono);
+      font-size: .82rem;
+      line-height: 1.8;
+      color: #98a6bf;
+    }
+    .rates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .rate {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.35rem 1.5rem;
+      background: rgba(13, 20, 38, .9);
+      border: 1px solid var(--cyan-line);
+      border-radius: var(--radius);
+    }
+    .rate-label {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .rate-label .icon { width: 28px; height: 28px; color: var(--cyan-strong); }
+    .rate-value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--cyan-strong);
+      font-feature-settings: "zero" 1;
+    }
+    .callout .btn {
+      margin-top: 2rem;
+      padding: .95rem 1.6rem;
+      font-size: .8rem;
+    }
+
+    /* ---------- Contact ---------- */
+    .contact { padding: 4rem 0 6rem; }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 3rem;
+      align-items: start;
+      max-width: 1280px;
+      margin-inline: auto;
+    }
+    .contact-copy h2 {
+      margin-top: .8rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2rem, 4.4vw, 3.1rem);
+      line-height: 1.12;
+    }
+    .contact-copy > p {
+      margin-top: 1.4rem;
+      color: #9aa8c2;
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 540px;
+    }
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      margin-top: 1.6rem;
+      padding: 1.5rem 1.6rem;
+      background: rgba(13, 20, 38, .9);
+      border: 1px solid var(--cyan-line);
+      border-radius: var(--radius);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .contact-card:hover { border-color: var(--cyan-dim); box-shadow: 0 0 24px rgba(130, 224, 255, .1); }
+    .contact-card + .contact-card { margin-top: 1.5rem; }
+    .contact-card .icon { width: 42px; height: 42px; flex: none; color: var(--cyan-strong); }
+    .contact-card.whatsapp .icon { color: var(--green); }
+    .contact-card small {
+      display: block;
+      font-family: var(--font-display);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+    .contact-card.whatsapp small { color: var(--green); }
+    .contact-card strong {
+      display: block;
+      margin-top: .15rem;
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      overflow-wrap: anywhere;
+    }
+    .contact-card.email strong { font-size: 1rem; }
+
+    .form-card {
+      padding: 2.4rem 2.2rem;
+      background: linear-gradient(180deg, #101728, #0b1121);
+      border: 1px solid var(--cyan-dim);
+      border-radius: 10px;
+      box-shadow: 0 0 60px rgba(127, 220, 255, .12);
+    }
+    .form-card h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.45rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-top: 1.6rem;
+    }
+    .field { display: flex; flex-direction: column; gap: .5rem; }
+    .field + .field-full, .form-row + .field { margin-top: 1.4rem; }
+    .field label {
+      font-family: var(--font-display);
+      font-size: .74rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+    .field input, .field textarea {
+      width: 100%;
+      padding: .85rem 1rem;
+      background: #060a16;
+      border: 1px solid var(--cyan-line);
+      border-radius: 4px;
+      font-size: .9rem;
+      color: #dbe6f7;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: #66728a; }
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--cyan-strong);
+      box-shadow: 0 0 0 3px rgba(130, 224, 255, .15);
+    }
+    .field textarea { min-height: 140px; resize: vertical; }
+    .form-card .btn {
+      width: 100%;
+      margin-top: 1.8rem;
+      padding: 1.1rem;
+      font-size: 1.05rem;
+      letter-spacing: .16em;
+      border-radius: 3px;
+    }
+    .form-status {
+      min-height: 1.4em;
+      margin-top: 1rem;
+      font-size: .85rem;
+      color: var(--cyan);
+    }
+
+    /* ---------- Footer ---------- */
+    .site-footer {
+      background: #000;
+      border-top: 1px solid rgba(127, 220, 255, .08);
+      padding: 4rem 0 2rem;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .footer-brand svg { width: 260px; height: 130px; }
+    .footer-brand p {
+      margin-top: 4.2rem;
+      max-width: 340px;
+      font-family: var(--font-mono);
+      font-size: .82rem;
+      line-height: 1.7;
+      color: #b6c3da;
+    }
+    .footer-cols { display: flex; gap: 4.5rem; padding-right: 0; }
+    .footer-cols h4 {
+      margin: 0 0 1.3rem;
+      font-family: var(--font-display);
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--cyan-strong);
+    }
+    .footer-cols li { margin-bottom: .7rem; }
+    .footer-cols a, .footer-cols span {
+      font-family: var(--font-mono);
+      font-size: .82rem;
+      color: #a9b8d1;
+      transition: color .2s;
+    }
+    .footer-cols a:hover { color: var(--cyan); }
+    .footer-bottom {
+      margin-top: 3.2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(127, 220, 255, .1);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: #556078;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1100px) {
+      .services { grid-template-columns: repeat(2, 1fr); }
+      .quick-links { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 760px; margin-inline: auto; }
+    }
+
+    @media (max-width: 900px) {
+      .header-inner { min-height: 160px; }
+      .logo svg { width: 200px; height: 100px; }
+      .nav-toggle { display: inline-flex; }
+      .nav {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 1rem 2rem 1.6rem;
+        background: var(--bg-header);
+        border-bottom: 1px solid var(--cyan-line);
+        display: none;
+      }
+      .nav.open { display: flex; }
+      .nav a:not(.btn) { padding: 1rem 0; border-bottom: 1px solid rgba(127, 220, 255, .08); }
+      .nav .btn { margin: 1.2rem 0 0; }
+
+      .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .callout-head { flex-direction: column; gap: .4rem; }
+      .callout-head p { max-width: none; }
+      .quick-links { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 460px; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding-inline: 1.25rem; }
+      .hero { padding-bottom: 3.5rem; }
+      .hero-lead { font-size: .98rem; line-height: 1.8; }
+      .hero-actions .btn { width: 100%; }
+      .section { padding: 3.5rem 0; }
+      .services { grid-template-columns: 1fr; margin-top: 2.5rem; }
+      .callout { padding: 2rem 1.25rem; }
+      .rates { grid-template-columns: 1fr; gap: 1rem; }
+      .callout .btn { width: 100%; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-card { padding: 1.8rem 1.25rem; }
+      .footer-top { flex-direction: column; gap: 2rem; }
+      .footer-brand p { margin-top: 1.5rem; }
+      .footer-cols { gap: 3rem; }
+      .nav { padding-inline: 1.25rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared SVG assets (logo + gradients) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8af0a8"/>
+        <stop offset=".55" stop-color="#5ad6c0"/>
+        <stop offset="1" stop-color="#3f9be8"/>
+      </linearGradient>
+    </defs>
+    <!--
+      PLACEHOLDER LOGO: swap any <svg><use href="#logo"/></svg> for your real logo file, e.g.
+      <img src="logo.png" alt="Twin Star Computers" width="260">
+    -->
+    <symbol id="logo" viewBox="0 0 260 130">
+      <path d="M112 30c0-17 28-27 49-21 14 4 18 17 10 27-8 11-28 19-43 15-10-3-16-12-16-21z" fill="url(#logoGrad)"/>
+      <path d="M121 42c9 14 29 16 46 2" fill="none" stroke="#0d2a3a" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>
+      <path d="M133 22c8-6 18-6 25-2" fill="none" stroke="#d8ffe6" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+      <text x="130" y="100" text-anchor="middle" textLength="236" lengthAdjust="spacingAndGlyphs"
+            font-family="Caveat, cursive" font-weight="600" font-size="34" fill="#5a5fb4"
+            font-style="italic">TWIN STAR COMPUTERS</text>
+      <text x="130" y="116" text-anchor="middle" font-family="Inter, sans-serif" font-size="6.5"
+            fill="#8a90b8" fill-opacity=".55">Company REG:</text>
+    </symbol>
+  </svg>
+
+  <!-- ================= HEADER ================= -->
+  <header class="site-header" id="home">
+    <div class="container header-inner">
+      <a class="logo" href="#home" aria-label="Twin Star Computers home">
+        <svg role="img" aria-label="Twin Star Computers"><use href="#logo"/></svg>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+
+      <nav class="nav" id="nav" aria-label="Main">
+        <a href="#home">Home</a>
+        <a href="#repairs">Repairs</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-solid" href="#contact">Book Repair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="grid-bg">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="container">
+        <h1>
+          Expert PC &amp; Laptop
+          <span>Repairs, Upgrades &amp; IT Sales</span>
+        </h1>
+
+        <p class="hero-lead">
+          Twin Star Computers brings slow or damaged systems back to peak performance.
+          From laptop hinge failure and cracked screen repairs to high-speed SSD upgrades,
+          we deliver dependable hardware solutions and cutting-edge IT sales for homes and businesses alike.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="#repairs">View Repair Rates</a>
+          <a class="btn btn-outline" href="#contact">Contact Support</a>
+        </div>
+
+        <div class="quick-links">
+          <div class="quick-link">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            Hinge Repairs
+          </div>
+          <div class="quick-link">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            Screen Replacement
+          </div>
+          <div class="quick-link">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><path d="M6 16h.01M10 16h.01"/></svg>
+            SSD Upgrades
+          </div>
+          <div class="quick-link">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            IT Sales
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SERVICES ================= -->
+    <section class="section" id="repairs">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Our Services</span>
+          <h2>Expert Repairs &amp; Upgrades</h2>
+          <p>Fast, reliable resolutions for hardware issues. We specialize in bringing slow or damaged laptops back to peak performance.</p>
+        </div>
+
+        <div class="services">
+          <article class="service-card">
+            <div class="service-icon">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <h3>Laptop Hinge Repairs</h3>
+            <p>Expert fix for broken or failing laptop hinges, restoring full structural integrity and functionality.</p>
+            <div class="price">from R1 000</div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h3>Cracked Screens</h3>
+            <p>High-quality screen replacements for all major laptop brands and models.</p>
+            <div class="price">from R2 000</div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><path d="M6 16h.01M10 16h.01"/></svg>
+            </div>
+            <h3>SSD Upgrades</h3>
+            <p>Breathe new life into slow laptops with high-speed Solid State Drive storage upgrades.</p>
+            <div class="price">from R1 800</div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></svg>
+            </div>
+            <h3>Hardware Diagnostics</h3>
+            <p>Comprehensive system checks to identify underlying faults and hardware performance bottlenecks.</p>
+            <div class="price">Inquire</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CALL-OUT RATES ================= -->
+    <section class="callout-wrap">
+      <div class="container">
+        <div class="callout">
+          <div class="callout-head">
+            <div>
+              <span class="eyebrow">On-Site Support</span>
+              <h2>Call-Out &amp; Support Rates</h2>
+            </div>
+            <p>Professional on-site IT support for home and business environments, with rapid response times.</p>
+          </div>
+
+          <div class="rates">
+            <div class="rate">
+              <span class="rate-label">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                Call-Out Fee
+              </span>
+              <span class="rate-value">R300</span>
+            </div>
+            <div class="rate">
+              <span class="rate-label">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/></svg>
+                Hourly Rate
+              </span>
+              <span class="rate-value">R350</span>
+            </div>
+          </div>
+
+          <a class="btn btn-outline" href="#contact">Book a Call-Out</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="contact-grid">
+
+          <div class="contact-copy">
+            <span class="eyebrow">Get in Touch</span>
+            <h2>Book a Repair or Upgrade</h2>
+            <p>Need a screen fixed, a hinge repaired, or an SSD upgrade? Contact us directly via WhatsApp or email, or submit a request online.</p>
+
+            <a class="contact-card whatsapp" href="https://wa.me/27678733789" target="_blank" rel="noopener">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.4-2-1-.9.7c-.8-.4-1.5-1.1-1.9-1.9l.7-.9-1-2z"/></svg>
+              <span>
+                <small>WhatsApp us</small>
+                <strong>067 873 3789</strong>
+              </span>
+            </a>
+
+            <a class="contact-card email" href="mailto:craig@tscomp.co.za">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <span>
+                <small>Email Craig</small>
+                <strong>craig@tscomp.co.za</strong>
+              </span>
+            </a>
+          </div>
+
+          <form class="form-card" id="contactForm" novalidate>
+            <h3>Send a Message</h3>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" placeholder="Your name" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="details">Hardware issue details</label>
+              <textarea id="details" name="details" placeholder="Tell us about the issue or what you want to upgrade..." required></textarea>
+            </div>
+
+            <button class="btn btn-solid" type="submit">Send Request</button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          </form>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <svg role="img" aria-label="Twin Star Computers"><use href="#logo"/></svg>
+          <p>Expert PC repairs, hardware upgrades, and reliable on-site IT support.</p>
+        </div>
+
+        <div class="footer-cols">
+          <div>
+            <h4>Links</h4>
+            <ul>
+              <li><a href="#repairs">Repairs</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Contact</h4>
+            <ul>
+              <li><a href="mailto:craig@tscomp.co.za">craig@tscomp.co.za</a></li>
+              <li><a href="tel:+27678733789">067 873 3789</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; <span id="year">2026</span> Twin Star Computers. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const toggle = document.getElementById('navToggle');
+    const nav = document.getElementById('nav');
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }));
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Contact form -> opens the visitor's email app with the request pre-filled.
+    // Replace with a form service (Formspree, Netlify Forms, etc.) or your own backend for direct delivery.
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const status = document.getElementById('formStatus');
+      const name = e.target.name.value.trim();
+      const email = e.target.email.value.trim();
+      const details = e.target.details.value.trim();
+
+      if (!name || !email || !details || !/^\S+@\S+\.\S+$/.test(email)) {
+        status.textContent = 'Please enter your name, a valid email and the issue details.';
+        return;
+      }
+      const subject = encodeURIComponent('Repair request from ' + name);
+      const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + details);
+      window.location.href = 'mailto:craig@tscomp.co.za?subject=' + subject + '&body=' + body;
+      status.textContent = 'Opening your email app to send the request…';
+    });
+  </script>
+</body>
+</html>
